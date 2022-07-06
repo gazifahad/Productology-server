@@ -20,7 +20,36 @@ async function run() {
     try {
         await client.connect();
         const productCollection=client.db("products").collection('product');
-        productCollection.insertOne({name:"janina",price:"manina"})
+        
+        app.get('/allProduct',async(req,res)=>{
+            const page = parseInt(req.query.page);
+            const size = parseInt(req.query.size);
+            const query = {};
+
+            const cursor = await productCollection.find(query).sort({ _id: -1 });
+            let bills;
+            if (page || size) {
+                const rest = (page - 1);
+
+                bills = await cursor.skip(rest * size).limit(size).toArray();
+            }
+            else {
+                bills = await cursor.toArray();
+            }
+
+
+            res.send(bills);
+        })
+        app.get('/entityCount',async(req,res)=>{
+            const query={};
+            // const cursor= productCollection.find(query);
+            const count=await productCollection.countDocuments();
+            // console.log(products);
+             res.send({count});
+
+        })
+
+
         app.get('/',(req,res)=>{
             res.send('connected to warehouse')
         }) 
@@ -33,4 +62,4 @@ finally{
 app.listen(port,()=>{
     console.log('connected to',port)
 })
-run().catch(console.dir);;
+run().catch(console.dir);
