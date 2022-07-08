@@ -50,17 +50,17 @@ async function run() {
         })
         app.get('/my-products',async(req,res)=>{
             const email=req.query.email;
-            console.log(email);
+            // console.log(email);
             const query={email:email}
             const products= productCollection.find(query)
             const result=await products.toArray();
             res.send(result);
-            console.log(result);
+            // console.log(result);
         })
         app.post('/add-product',async(req,res)=>{
                 const newProduct=(req.body)
                const result= await productCollection.insertOne(newProduct);
-               console.log(newProduct);
+            //    console.log(newProduct);
                 res.send({success:'added successfully'});
 
         })
