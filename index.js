@@ -1,7 +1,7 @@
 const express=require('express');
 const cors= require('cors');
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
  const app=express();
  const port=process.env.PORT || 5000;
@@ -47,6 +47,28 @@ async function run() {
             // console.log(products);
              res.send({count});
 
+        })
+        app.get('/my-products',async(req,res)=>{
+            const email=req.query.email;
+            console.log(email);
+            const query={email:email}
+            const products= productCollection.find(query)
+            const result=await products.toArray();
+            res.send(result);
+            console.log(result);
+        })
+        app.post('/add-product',async(req,res)=>{
+                const newProduct=(req.body)
+               const result= await productCollection.insertOne(newProduct);
+               console.log(newProduct);
+                res.send({success:'added successfully'});
+
+        })
+        app.delete('/delete-product',async(req,res)=>{
+            const id=req.query.id;
+            const query={_id:ObjectId(id)}
+            const result=await productCollection.deleteOne(query);
+            res.send(result);
         })
 
 
